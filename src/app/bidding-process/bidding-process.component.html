@@ -1,0 +1,71 @@
+<pre>Selected Player Response {{ selectedPlayer$ | async | json }}</pre>
+<pre>Latest Player Response {{ latestDetails$ | async | json }}</pre>
+@if(ownerDetails) {
+<h2>Welcome {{ ownerDetails.firstName }} {{ ownerDetails.lastName }}!</h2>
+@if(selectedPlayer$ | async; as selectedPlayer) {
+<h2>{{ selectedPlayer.firstName }} {{ selectedPlayer.lastName }}</h2>
+<h1>
+  Base Price:
+  {{ selectedPlayer.basePrice }}
+</h1>
+<h1>
+  Current Price: @if(latestDetails$ | async ; as details) {
+  {{ details.currentBidAmount }}
+  }@else if(currentValue === 0) {
+  {{ selectedPlayer.currentBidAmount }}
+  } @else {
+  {{ currentValue }}
+  }
+</h1>
+
+<form [formGroup]="biddingForm">
+  <div>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="bidByAmount(100, selectedPlayer)"
+    >
+      +100
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="bidByAmount(200, selectedPlayer)"
+    >
+      +200
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="bidByAmount(500, selectedPlayer)"
+    >
+      +500
+    </button>
+  </div>
+</form>
+} @else {
+<h2>Player not selected</h2>
+} }@else if(isAdmin) {
+<h2>Admin Dashboard</h2>
+@if(latestDetails$ | async; as details) {
+<form [formGroup]="biddingForm">
+  <div>
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="markAsSold(details.userId)"
+    >
+      Sold
+    </button>
+    <button
+      mat-raised-button
+      [disabled]="details.currentBidAmount !== details.basePrice"
+      (click)="markAsUnsold()"
+    >
+      Unsold
+    </button>
+  </div>
+</form>
+} } @else {
+<h1>Owner not found!</h1>
+}

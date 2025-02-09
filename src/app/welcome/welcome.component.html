@@ -1,0 +1,31 @@
+<mat-card class="user-form-card">
+  <mat-card-header>
+    <mat-card-title>Let's Build My Team</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" required type="email" />
+        <mat-error *ngIf="userForm.get('email')?.errors?.['required']">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="userForm.get('email')?.errors?.['email']">
+          Please enter a valid email address
+        </mat-error>
+      </mat-form-field>
+
+      <div class="form-actions">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="userForm.invalid"
+        >
+          Start Bidding
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

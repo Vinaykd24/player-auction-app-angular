@@ -1,0 +1,95 @@
+<mat-card class="user-form-card">
+  <mat-card-header>
+    <mat-card-title>Create New User</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="firstName" required />
+          <mat-error *ngIf="userForm.get('firstName')?.errors?.['required']">
+            First name is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="lastName" required />
+          <mat-error *ngIf="userForm.get('lastName')?.errors?.['required']">
+            Last name is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" required type="email" />
+        <mat-error *ngIf="userForm.get('email')?.errors?.['required']">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="userForm.get('email')?.errors?.['email']">
+          Please enter a valid email address
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" required type="password" />
+        <mat-error *ngIf="userForm.get('password')?.errors?.['required']">
+          Password is required
+        </mat-error>
+        <mat-error *ngIf="userForm.get('password')?.errors?.['minlength']">
+          Password must be at least 8 characters long
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>User Type</mat-label>
+        <mat-select formControlName="userType" required>
+          <mat-option value="admin">Admin</mat-option>
+          <mat-option value="player">Player</mat-option>
+          <mat-option value="owner">Owner</mat-option>
+        </mat-select>
+        <mat-error *ngIf="userForm.get('userType')?.errors?.['required']">
+          User type is required
+        </mat-error>
+      </mat-form-field>
+      @if(userForm.get('userType')?.value === 'owner') {
+      <mat-form-field appearance="outline">
+        <mat-label>Team Name</mat-label>
+        <input matInput formControlName="teamName" required />
+        <mat-error *ngIf="userForm.get('teamName')?.errors?.['required']">
+          Team name is required
+        </mat-error>
+      </mat-form-field>
+      } @if(userForm.get('userType')?.value === 'player') {
+      <mat-form-field appearance="outline">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="role" required>
+          <mat-option value="batter">Batter</mat-option>
+          <mat-option value="bowler">Bowler</mat-option>
+          <mat-option value="allrounder">All Rounder</mat-option>
+          <mat-option value="wicketkeeper">Wicket Keeper</mat-option>
+        </mat-select>
+        <mat-error *ngIf="userForm.get('role')?.errors?.['required']">
+          Role is required
+        </mat-error>
+      </mat-form-field>
+      }
+
+      <div class="form-actions">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="userForm.invalid"
+        >
+          Create User
+        </button>
+        <button mat-button type="button" (click)="resetForm()">Reset</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

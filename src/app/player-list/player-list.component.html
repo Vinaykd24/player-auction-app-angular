@@ -1,0 +1,80 @@
+<div class="container">
+  <h2>Players List</h2>
+
+  <ng-container *ngIf="tableState$ | async as state">
+    <div class="loading-spinner" *ngIf="state.loading">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div *ngIf="state.error" class="error-message">
+      {{ state.error }}
+    </div>
+
+    <div
+      class="mat-elevation-z8"
+      *ngIf="!state.loading && !state.error && state.players.length > 0"
+    >
+      <table mat-table [dataSource]="state.players" matSort>
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <td mat-cell *matCellDef="let player">
+            {{ player.firstName }} {{ player.lastName }}
+          </td>
+        </ng-container>
+
+        <!-- Role Column -->
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Position</th>
+          <td mat-cell *matCellDef="let player">
+            {{ player.role || "N/A" }}
+          </td>
+        </ng-container>
+
+        <!-- Base Price Column -->
+        <ng-container matColumnDef="basePrice">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Base Price</th>
+          <td mat-cell *matCellDef="let player">
+            {{ player.basePrice | currency : "INR" }}
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let player">
+            <button
+              mat-raised-button
+              color="primary"
+              [disabled]="(biddingInProgress$ | async)?.includes(player.userId)"
+              (click)="startBidding(player)"
+            >
+              {{
+                (biddingInProgress$ | async)?.includes(player.userId)
+                  ? "Starting..."
+                  : "Start Bidding"
+              }}
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        [pageSize]="10"
+        showFirstLastButtons
+      ></mat-paginator>
+    </div>
+
+    <!-- No data message -->
+    <div
+      *ngIf="!state.loading && !state.error && state.players.length === 0"
+      class="no-data-message"
+    >
+      No players found
+    </div>
+  </ng-container>
+</div>

@@ -6,6 +6,7 @@ import {
   BiddingPayload,
   BiddingProgressResponse,
   MarkSoldResponse,
+  OwnerDetails,
   Player,
   PlayersResponse,
 } from '../../models/player.model';
@@ -16,7 +17,8 @@ import {
 export class PlayerService {
   private apiUrl = environment.apiUrl;
   private selectedPlayerUidSignal: WritableSignal<string> = signal('');
-  private selectedOwnerSignal: WritableSignal<Player | null> = signal(null);
+  private selectedOwnerSignal: WritableSignal<OwnerDetails | null> =
+    signal(null);
   private isAdmin: WritableSignal<boolean> = signal(false);
 
   constructor(private http: HttpClient) {}
@@ -39,7 +41,7 @@ export class PlayerService {
     this.selectedPlayerUidSignal.set(playerUid);
   }
 
-  setSelectedOwnerSignal(ownerDetails: Player): void {
+  setSelectedOwnerSignal(ownerDetails: OwnerDetails): void {
     this.selectedOwnerSignal.set(ownerDetails);
   }
 
@@ -55,7 +57,7 @@ export class PlayerService {
     return this.selectedPlayerUidSignal();
   }
 
-  getSelectedOwnerSignal(): Player | null {
+  getSelectedOwnerSignal(): OwnerDetails | null {
     return this.selectedOwnerSignal();
   }
 
@@ -78,9 +80,12 @@ export class PlayerService {
     );
   }
 
-  getUserDetailsByEmailId(userEmail: string): Observable<Player> {
+  getUserDetailsByEmailId(userEmail: string): Observable<OwnerDetails> {
     const userEmailDetails = { userEmail };
-    return this.http.post<Player>(`${this.apiUrl}/getowner`, userEmailDetails);
+    return this.http.post<OwnerDetails>(
+      `${this.apiUrl}/getowner`,
+      userEmailDetails
+    );
   }
 
   markPlayerSold(playerId: string): Observable<MarkSoldResponse> {

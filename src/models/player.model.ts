@@ -8,6 +8,17 @@ export interface Player {
   basePrice: number;
 }
 
+export interface OwnerDetails {
+  teamName: string;
+  firstName: string;
+  lastName: string;
+  userEmail: string;
+  userType: string;
+  userId: string;
+  teamMembers: string[];
+  budget: number;
+}
+
 export interface PlayersResponse {
   players: Player[];
 }
@@ -31,6 +42,7 @@ export interface BiddingProgressResponse {
   currentBidAmount: number;
   createdAt: string;
   biddingId: string;
+  bidAmount: number;
 }
 
 export interface MarkSoldResponse {

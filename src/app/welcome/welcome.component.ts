@@ -58,11 +58,12 @@ export class WelcomeComponent {
         if (response) {
           console.log('Owner details fetched:', response);
           if (response.userType.toLocaleLowerCase() === 'owner') {
+            this.router.navigate(['/biddingprocess']);
             this.playerService.setSelectedOwnerSignal(response);
           } else if (response.userType.toLocaleLowerCase() === 'admin') {
             this.playerService.setIsAdminSignal();
+            this.router.navigate(['/players']);
           }
-          this.router.navigate(['/biddingprocess']);
         } else {
           console.warn('No owner found for the provided email.');
           // You can show a notification or error message to the user here.

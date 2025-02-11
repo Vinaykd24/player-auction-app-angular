@@ -1,1 +1,15 @@
-<router-outlet />
+<mat-toolbar color="primary">
+  <span>Auction System</span>
+  <div class="spacer"></div>
+  <button mat-button routerLink="/" routerLinkActive="active">Home</button>
+  <button mat-button routerLink="/biddingprocess" routerLinkActive="active">
+    Bidding
+  </button>
+  <button mat-button routerLink="/players" routerLinkActive="active">
+    Players
+  </button>
+</mat-toolbar>
+
+<div class="content">
+  <router-outlet></router-outlet>
+</div>

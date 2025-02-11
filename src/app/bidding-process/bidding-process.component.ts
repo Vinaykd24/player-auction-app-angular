@@ -1,13 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PlayerService } from '../services/player.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import {
   BiddingPayload,
   BiddingProgressResponse,
+  OwnerDetails,
   Player,
 } from '../../models/player.model';
-import { interval, Observable, Subscription, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  interval,
+  map,
+  Observable,
+  of,
+  Subject,
+  Subscription,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,14 +39,15 @@ import { MatInputModule } from '@angular/material/input';
   templateUrl: './bidding-process.component.html',
   styleUrl: './bidding-process.component.scss',
 })
-export class BiddingProcessComponent implements OnInit {
-  selectedPlayer$!: Observable<BiddingProgressResponse>;
-  latestDetails$!: Observable<BiddingProgressResponse>;
+export class BiddingProcessComponent implements OnInit, OnDestroy {
+  selectedPlayer$!: Observable<BiddingProgressResponse | null>;
+  latestDetails$!: Observable<BiddingProgressResponse | null>;
   latestDetails!: BiddingProgressResponse;
-  ownerDetails!: Player | null;
+  ownerDetails!: OwnerDetails | null;
   biddingForm: FormGroup;
   currentValue = 0;
   private subscription!: Subscription;
+  private destroy$ = new Subject<void>();
   isAdmin = false;
   constructor(
     private fb: FormBuilder,
@@ -49,24 +62,43 @@ export class BiddingProcessComponent implements OnInit {
   ngOnInit(): void {
     this.ownerDetails = this.playerService.getSelectedOwnerSignal();
     this.isAdmin = this.playerService.getIsAdmin();
+
     if (this.ownerDetails || this.isAdmin) {
-      this.subscription = interval(6000)
-        .pipe(switchMap(() => this.playerService.fetchLatestBid()))
-        .subscribe({
-          next: (response: BiddingProgressResponse) => {
-            console.log(response);
-            this.latestDetails = response;
-            this.currentValue = response.currentBidAmount;
-          },
-          error: (error) => {
-            console.log(error);
-          },
-        });
-      // Poll every 1 second
-      this.latestDetails$ = interval(1000).pipe(
-        switchMap(() => this.playerService.fetchLatestBid())
+      // Poll every 1 second for the latest bid details
+      this.latestDetails$ = interval(30000).pipe(
+        switchMap(() =>
+          this.playerService.fetchLatestBid().pipe(
+            catchError((error) => {
+              console.error('Error fetching latest bid:', error);
+              return of(null); // Return a fallback value
+            })
+          )
+        ),
+        takeUntil(this.destroy$)
       );
-      this.selectedPlayer$ = this.playerService.biddingProgress();
+
+      // Combine selectedPlayer$ and latestDetails$ to update currentBidAmount
+      this.selectedPlayer$ = this.playerService.biddingProgress().pipe(
+        switchMap((player) =>
+          this.latestDetails$.pipe(
+            map((latestDetails) => {
+              if (latestDetails && latestDetails.currentBidAmount) {
+                return {
+                  ...player,
+                  currentBidAmount: latestDetails.currentBidAmount,
+                  bidAmount: latestDetails.bidAmount,
+                };
+              }
+              return player;
+            })
+          )
+        ),
+        catchError((error) => {
+          console.error('Error fetching bidding progress:', error);
+          return of(null); // Handle error and provide fallback value
+        }),
+        takeUntil(this.destroy$)
+      );
     }
   }
 
@@ -87,19 +119,27 @@ export class BiddingProcessComponent implements OnInit {
     );
   }
 
-  bidByAmount(amount: number, player: Player) {
-    console.log(amount);
-    // this.currentValue =
-    //   this.currentValue === 0
-    //     ? player.basePrice + amount
-    //     : this.currentValue + amount;
+  bidByAmount(amount: number, biddingObject: any): void {
+    if (!biddingObject) {
+      console.error('No bidding object available!');
+      return;
+    }
+
+    // Determine the current value (base price if no bid yet)
+    const currentBidAmount =
+      biddingObject.currentBidAmount || biddingObject.basePrice || 0;
+    const updatedBidAmount = currentBidAmount + amount;
+
     if (this.ownerDetails) {
+      // Create the payload for the bidding API
       const biddingPayload: BiddingPayload = {
-        playerId: player.userId,
-        currentBidAmount: this.currentValue + amount,
-        bidAmount: amount,
-        teamId: this.ownerDetails?.userId,
+        playerId: biddingObject.userId, // Use playerId from the biddingObject
+        currentBidAmount: updatedBidAmount, // The updated bid amount
+        bidAmount: amount, // The amount being added
+        teamId: this.ownerDetails?.userId, // Team placing the bid
       };
+
+      // Call the service to place the bid
       this.playerService.placeBid(biddingPayload).subscribe({
         next: (response) => {
           console.log('Bid placed successfully:', response);
@@ -108,6 +148,8 @@ export class BiddingProcessComponent implements OnInit {
           console.error('Error placing bid:', err);
         },
       });
+    } else {
+      console.error('Owner details not found. Cannot place bid.');
     }
   }
 
@@ -138,5 +180,10 @@ export class BiddingProcessComponent implements OnInit {
         );
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

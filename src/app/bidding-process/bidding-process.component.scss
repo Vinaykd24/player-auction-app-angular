@@ -1,0 +1,78 @@
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+h3 {
+  font-size: 1.5rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.bid-controls,
+.admin-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+pre {
+  background-color: #ececec;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+[mat-raised-button] {
+  transition: transform 0.2s ease-in-out;
+}
+
+[mat-raised-button]:hover {
+  transform: scale(1.05);
+}
+
+[mat-raised-button][color="primary"] {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+[mat-raised-button][color="accent"] {
+  background-color: #ff4081;
+  color: #fff;
+}
+
+[mat-raised-button][color="warn"] {
+  background-color: #d32f2f;
+  color: #fff;
+}
+
+[mat-flat-button][color="primary"] {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #000;
+  margin: 10px 0;
+}

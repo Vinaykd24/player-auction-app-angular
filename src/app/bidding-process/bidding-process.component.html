@@ -1,3 +1,71 @@
+<div class="container" *ngIf="selectedPlayer$ | async as selectedPlayer">
+  <h2>{{ selectedPlayer.firstName }} {{ selectedPlayer.lastName }}</h2>
+  <h1>Current Bid: ₹{{ selectedPlayer.currentBidAmount | number }}</h1>
+  <div>
+    <pre>{{ selectedPlayer.bidAmount | currency : "INR" }}</pre>
+  </div>
+  <pre>
+Is the team ID is same: {{
+      ownerDetails?.userId === selectedPlayer.teamId
+    }}</pre
+  >
+
+  <form [formGroup]="biddingForm" class="bid-controls">
+    @if(selectedPlayer.bidAmount <= 100) {
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="selectedPlayer?.teamId === ownerDetails?.userId"
+      (click)="bidByAmount(100, selectedPlayer)"
+    >
+      +100
+    </button>
+    <button
+      mat-raised-button
+      color="accent"
+      [disabled]="selectedPlayer?.teamId === ownerDetails?.userId"
+      (click)="bidByAmount(200, selectedPlayer)"
+    >
+      +200
+    </button>
+    <button
+      mat-raised-button
+      color="warn"
+      [disabled]="selectedPlayer?.teamId === ownerDetails?.userId"
+      (click)="bidByAmount(500, selectedPlayer)"
+    >
+      +500
+    </button>
+    } @else if (selectedPlayer.bidAmount <= 200) {
+    <button
+      mat-raised-button
+      color="accent"
+      [disabled]="selectedPlayer?.teamId === ownerDetails?.userId"
+      (click)="bidByAmount(200, selectedPlayer)"
+    >
+      +200
+    </button>
+    <button
+      mat-raised-button
+      color="warn"
+      [disabled]="selectedPlayer?.teamId === ownerDetails?.userId"
+      (click)="bidByAmount(500, selectedPlayer)"
+    >
+      +500
+    </button>
+    } @else {
+    <button
+      mat-raised-button
+      color="warn"
+      [disabled]="selectedPlayer?.teamId === ownerDetails?.userId"
+      (click)="bidByAmount(500, selectedPlayer)"
+    >
+      +500
+    </button>
+    }
+  </form>
+</div>
+
 <div class="container">
   <pre>Selected Player Response: {{ selectedPlayer$ | async | json }}</pre>
   <pre>Latest Player Response: {{ latestDetails$ | async | json }}</pre>
@@ -37,6 +105,7 @@
         <button
           mat-raised-button
           color="primary"
+          [disabled]="selectedPlayer?.teamId === ownerDetails?.userId"
           (click)="bidByAmount(100, selectedPlayer)"
         >
           +100
@@ -44,6 +113,7 @@
         <button
           mat-raised-button
           color="accent"
+          [disabled]="selectedPlayer?.teamId === ownerDetails?.userId"
           (click)="bidByAmount(200, selectedPlayer)"
         >
           +200
@@ -51,6 +121,7 @@
         <button
           mat-raised-button
           color="warn"
+          [disabled]="selectedPlayer?.teamId === ownerDetails?.userId"
           (click)="bidByAmount(500, selectedPlayer)"
         >
           +500
@@ -59,6 +130,7 @@
         <button
           mat-raised-button
           color="accent"
+          [disabled]="selectedPlayer?.teamId === ownerDetails?.userId"
           (click)="bidByAmount(200, selectedPlayer)"
         >
           +200
@@ -66,6 +138,7 @@
         <button
           mat-raised-button
           color="warn"
+          [disabled]="selectedPlayer?.teamId === ownerDetails?.userId"
           (click)="bidByAmount(500, selectedPlayer)"
         >
           +500
@@ -74,6 +147,7 @@
         <button
           mat-raised-button
           color="warn"
+          [disabled]="selectedPlayer?.teamId === ownerDetails?.userId"
           (click)="bidByAmount(500, selectedPlayer)"
         >
           +500

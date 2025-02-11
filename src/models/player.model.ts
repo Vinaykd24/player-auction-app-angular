@@ -43,6 +43,7 @@ export interface BiddingProgressResponse {
   createdAt: string;
   biddingId: string;
   bidAmount: number;
+  teamId: string;
 }
 
 export interface MarkSoldResponse {

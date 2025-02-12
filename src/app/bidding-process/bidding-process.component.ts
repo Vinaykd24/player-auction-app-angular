@@ -78,6 +78,20 @@ export class BiddingProcessComponent implements OnInit, OnDestroy {
           takeUntil(this.destroy$)
         )
         .subscribe();
+
+      this.playerService
+        .onPlayerSoldUpdates()
+        .pipe(
+          tap((playerSoldUpdates) => {
+            this.snackBar.open(playerSoldUpdates.message, 'Close', {
+              duration: 5000,
+              horizontalPosition: 'right',
+              verticalPosition: 'top',
+            });
+          }),
+          takeUntil(this.destroy$)
+        )
+        .subscribe();
     }
   }
 

@@ -24,6 +24,8 @@ export class PlayerService {
   private socket!: Socket;
   private biddingUpdatesSubject: Subject<BiddingProgressResponse> =
     new Subject<BiddingProgressResponse>();
+  private playerSoldSubject: Subject<MarkSoldResponse> =
+    new Subject<MarkSoldResponse>();
   constructor(private http: HttpClient) {}
 
   connectWebSocket(playerId: string): void {
@@ -45,6 +47,11 @@ export class PlayerService {
       this.biddingUpdatesSubject.next(data);
     });
 
+    this.socket.on('playerSold', (data) => {
+      console.log('🚨 Player Sold Notification:', data);
+      this.playerSoldSubject.next(data);
+    });
+
     this.socket.on('disconnect', (reason) => {
       console.warn('⚠️ WebSocket disconnected:', reason);
     });
@@ -63,6 +70,10 @@ export class PlayerService {
 
   onBiddingUpdates(): Observable<BiddingProgressResponse> {
     return this.biddingUpdatesSubject.asObservable();
+  }
+
+  onPlayerSoldUpdates(): Observable<MarkSoldResponse> {
+    return this.playerSoldSubject.asObservable();
   }
 
   getPlayers(): Observable<Player[]> {

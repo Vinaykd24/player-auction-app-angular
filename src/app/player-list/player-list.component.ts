@@ -120,6 +120,7 @@ export class PlayerListComponent implements OnInit {
               verticalPosition: 'top',
             }
           );
+          this.playerService.setSelectedPlayerUidSignal(player.userId);
           this.router.navigate(['/biddingprocess']);
         },
         error: (error) => {

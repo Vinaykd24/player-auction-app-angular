@@ -6,21 +6,8 @@ import {
   BiddingPayload,
   BiddingProgressResponse,
   OwnerDetails,
-  Player,
 } from '../../models/player.model';
-import {
-  BehaviorSubject,
-  catchError,
-  interval,
-  map,
-  Observable,
-  of,
-  Subject,
-  Subscription,
-  switchMap,
-  takeUntil,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, Subject, Subscription, tap, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -38,21 +25,18 @@ import { MatInputModule } from '@angular/material/input';
     MatSnackBarModule,
   ],
   templateUrl: './bidding-process.component.html',
-  styleUrl: './bidding-process.component.scss',
+  styleUrls: ['./bidding-process.component.scss'],
 })
 export class BiddingProcessComponent implements OnInit, OnDestroy {
-  // selectedPlayer$!: Observable<BiddingProgressResponse | null>;
-  // latestDetails$!: Observable<BiddingProgressResponse | null>;
   selectedPlayer$ = new BehaviorSubject<BiddingProgressResponse | null>(null);
   latestDetails$ = new BehaviorSubject<BiddingProgressResponse | null>(null);
   lastBidTeamId: string | null = null;
-  latestDetails!: BiddingProgressResponse;
   ownerDetails!: OwnerDetails | null;
   biddingForm: FormGroup;
   currentValue = 0;
-  private subscription!: Subscription;
   private destroy$ = new Subject<void>();
   isAdmin = false;
+
   constructor(
     private fb: FormBuilder,
     private playerService: PlayerService,
@@ -63,20 +47,17 @@ export class BiddingProcessComponent implements OnInit, OnDestroy {
       customBidAmt: [''],
     });
   }
+
   ngOnInit(): void {
     this.ownerDetails = this.playerService.getSelectedOwnerSignal();
     this.isAdmin = this.playerService.getIsAdmin();
 
     if (this.ownerDetails || this.isAdmin) {
-      // Poll every 1 second for the latest bid details
-
-      // Initial data load
       this.loadBiddingData();
 
-      // Start polling
-      interval(1000)
+      this.playerService
+        .onBiddingUpdates()
         .pipe(
-          switchMap(() => this.playerService.fetchLatestBid()),
           tap((latestBid) => {
             if (latestBid) {
               this.lastBidTeamId = this.ownerDetails
@@ -107,16 +88,23 @@ export class BiddingProcessComponent implements OnInit, OnDestroy {
   }
 
   private loadBiddingData() {
-    this.playerService
-      .biddingProgress()
-      .pipe(
-        tap((player) => {
-          if (player) {
-            this.selectedPlayer$.next(player);
+    this.playerService.biddingProgress().subscribe({
+      next: (player) => {
+        if (player) {
+          this.selectedPlayer$.next(player);
+
+          const playerId = player.userId || ''; // Extract playerId from response
+          if (playerId) {
+            this.playerService.connectWebSocket(playerId);
+          } else {
+            console.error('Player ID is missing from API response');
           }
-        })
-      )
-      .subscribe();
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching bidding data:', err);
+      },
+    });
   }
 
   bidByAmount(amount: number, biddingObject: any): void {
@@ -135,7 +123,6 @@ export class BiddingProcessComponent implements OnInit, OnDestroy {
       .placeBid(biddingPayload)
       .pipe(
         tap((response) => {
-          // Update local state immediately
           const currentPlayer = this.selectedPlayer$.value;
           if (currentPlayer) {
             this.selectedPlayer$.next({
@@ -154,7 +141,6 @@ export class BiddingProcessComponent implements OnInit, OnDestroy {
   }
 
   markAsSold(playerId: string) {
-    console.log(playerId);
     this.playerService.markPlayerSold(playerId).subscribe({
       next: (response) => {
         this.snackBar.open(`${response.message}`, 'Close', {
@@ -181,5 +167,6 @@ export class BiddingProcessComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.playerService.disconnectWebSocket();
   }
 }

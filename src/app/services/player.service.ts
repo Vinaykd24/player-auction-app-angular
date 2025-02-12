@@ -1,6 +1,6 @@
 import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { map, Observable, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
   BiddingPayload,
@@ -10,6 +10,7 @@ import {
   Player,
   PlayersResponse,
 } from '../../models/player.model';
+import { io, Socket } from 'socket.io-client';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +21,49 @@ export class PlayerService {
   private selectedOwnerSignal: WritableSignal<OwnerDetails | null> =
     signal(null);
   private isAdmin: WritableSignal<boolean> = signal(false);
-
+  private socket!: Socket;
+  private biddingUpdatesSubject: Subject<BiddingProgressResponse> =
+    new Subject<BiddingProgressResponse>();
   constructor(private http: HttpClient) {}
+
+  connectWebSocket(playerId: string): void {
+    if (this.socket) {
+      this.socket.disconnect(); // Close any existing connection before reconnecting
+    }
+
+    this.socket = io(environment.websocketUrl, {
+      query: { playerId },
+      transports: ['websocket'], // Use WebSocket transport for stability
+    });
+
+    this.socket.on('connect', () => {
+      console.log('✅ Connected to WebSocket');
+    });
+
+    this.socket.on('updateBid', (data: BiddingProgressResponse) => {
+      console.log('📢 Received bid update:', data);
+      this.biddingUpdatesSubject.next(data);
+    });
+
+    this.socket.on('disconnect', (reason) => {
+      console.warn('⚠️ WebSocket disconnected:', reason);
+    });
+
+    this.socket.on('connect_error', (error) => {
+      console.error('❌ WebSocket connection error:', error);
+    });
+  }
+
+  disconnectWebSocket(): void {
+    if (this.socket) {
+      this.socket.disconnect();
+      console.log('🔌 WebSocket disconnected');
+    }
+  }
+
+  onBiddingUpdates(): Observable<BiddingProgressResponse> {
+    return this.biddingUpdatesSubject.asObservable();
+  }
 
   getPlayers(): Observable<Player[]> {
     return this.http.get<PlayersResponse>(`${this.apiUrl}/players`).pipe(
@@ -64,6 +106,13 @@ export class PlayerService {
   biddingProgress(): Observable<BiddingProgressResponse> {
     return this.http.get<BiddingProgressResponse>(
       `${this.apiUrl}/biddingprogress`
+    );
+  }
+
+  // Fetch bidding data using playerId
+  initiateBidding(playerId: string): Observable<BiddingProgressResponse> {
+    return this.http.get<BiddingProgressResponse>(
+      `${this.apiUrl}/initiatebidding/${playerId}`
     );
   }
 

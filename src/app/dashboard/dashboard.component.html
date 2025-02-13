@@ -1,0 +1,168 @@
+<ng-container *ngIf="!isAdmin; else isAdminTemplate">
+  <div class="dashboard-container" *ngIf="ownerDetails$ | async as teamData">
+    <!-- Team Header Card -->
+    <mat-card class="header-card">
+      <mat-card-header>
+        <mat-card-title>{{ teamData.teamName }}</mat-card-title>
+        <mat-card-subtitle>
+          Owner: {{ getFullName(teamData.firstName, teamData.lastName) }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <mat-icon>email</mat-icon>
+            <span>{{ teamData.userEmail }}</span>
+          </div>
+          <div class="info-item">
+            <mat-icon>account_balance_wallet</mat-icon>
+            <span
+              >Available Budget:
+              <span
+                [ngClass]="getBudgetColor(teamData.budget)"
+                class="font-bold"
+              >
+                {{ teamData.budget | currency : "INR" }}
+              </span>
+              <span class="text-sm text-gray-500">
+                ({{ ((teamData.budget / 100000) * 100).toFixed(1) }}%)
+              </span>
+            </span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Team Members Table -->
+    <mat-card class="members-card">
+      <mat-card-header>
+        <mat-card-title>Team Members</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table
+          mat-table
+          [dataSource]="teamData.teamMembers"
+          class="mat-elevation-z8"
+        >
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let member">
+              {{ getFullName(member.firstName, member.lastName) }}
+            </td>
+          </ng-container>
+
+          <!-- Role Column -->
+          <ng-container matColumnDef="role">
+            <th mat-header-cell *matHeaderCellDef>Role</th>
+            <td mat-cell *matCellDef="let member">{{ member.role }}</td>
+          </ng-container>
+
+          <!-- Base Price Column -->
+          <ng-container matColumnDef="basePrice">
+            <th mat-header-cell *matHeaderCellDef>Base Price</th>
+            <td mat-cell *matCellDef="let member">
+              {{ member.basePrice | currency : "INR" }}
+            </td>
+          </ng-container>
+
+          <!-- Current Bid Column -->
+          <ng-container matColumnDef="currentBid">
+            <th mat-header-cell *matHeaderCellDef>Purchase Price</th>
+            <td mat-cell *matCellDef="let member">
+              {{ member.currentBidAmount | currency : "INR" }}
+            </td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let member">
+              <mat-chip
+                [color]="member.biddingStatus === 'SOLD' ? 'accent' : 'primary'"
+                selected
+              >
+                {{ member.biddingStatus }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</ng-container>
+<ng-template #isAdminTemplate>
+  <div
+    class="dashboard-container"
+    *ngIf="allOwnerDetails$ | async as allOwnerData"
+  >
+    <!-- Admin View -->
+    <mat-card class="owners-card" *ngIf="isAdmin">
+      <mat-card-header>
+        <mat-card-title>Team Owners Overview</mat-card-title>
+        <mat-card-subtitle
+          >Manage all team owners and their details</mat-card-subtitle
+        >
+      </mat-card-header>
+      <mat-card-content>
+        <table
+          mat-table
+          [dataSource]="allOwnerData.players"
+          class="mat-elevation-z8"
+        >
+          <!-- Team Name Column -->
+          <ng-container matColumnDef="teamName">
+            <th mat-header-cell *matHeaderCellDef>Team Name</th>
+            <td mat-cell *matCellDef="let team">{{ team.teamName }}</td>
+          </ng-container>
+
+          <!-- Owner Name Column -->
+          <ng-container matColumnDef="ownerName">
+            <th mat-header-cell *matHeaderCellDef>Owner Name</th>
+            <td mat-cell *matCellDef="let team">
+              {{ getFullName(team.firstName, team.lastName) }}
+            </td>
+          </ng-container>
+
+          <!-- Email Column -->
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>Email</th>
+            <td mat-cell *matCellDef="let team">{{ team.userEmail }}</td>
+          </ng-container>
+
+          <!-- Player Count Column -->
+          <ng-container matColumnDef="playerCount">
+            <th mat-header-cell *matHeaderCellDef>Players</th>
+            <td mat-cell *matCellDef="let team">
+              {{ team.teamMembers.length }}
+              <mat-icon
+                class="text-gray-500 ml-1"
+                [matTooltip]="'Total players in team'"
+                >people</mat-icon
+              >
+            </td>
+          </ng-container>
+
+          <!-- Budget Column -->
+          <ng-container matColumnDef="budget">
+            <th mat-header-cell *matHeaderCellDef>Available Budget</th>
+            <td mat-cell *matCellDef="let team">
+              <span [ngClass]="getBudgetColor(team.budget)" class="font-bold">
+                ₹{{ team.budget }}
+                <span class="text-sm text-gray-500">
+                  ({{ getBudgetPercentage(team.budget) }}%)
+                </span>
+              </span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="ownerColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: ownerColumns"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</ng-template>

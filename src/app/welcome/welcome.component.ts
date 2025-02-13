@@ -52,17 +52,19 @@ export class WelcomeComponent {
     const { email } = this.userForm.value;
 
     console.log('Form submitted with email:', email);
+    document.cookie = `email=${email}; path=/; max-age=3600`; // Cookie expires in 1 hour
 
     this.playerService.getUserDetailsByEmailId(email).subscribe({
       next: (response) => {
         if (response) {
           console.log('Owner details fetched:', response);
           if (response.userType.toLocaleLowerCase() === 'owner') {
-            this.router.navigate(['/biddingprocess']);
+            this.router.navigate(['/dashboard']);
             this.playerService.setSelectedOwnerSignal(response);
           } else if (response.userType.toLocaleLowerCase() === 'admin') {
             this.playerService.setIsAdminSignal();
-            this.router.navigate(['/players']);
+            this.router.navigate(['/dashboard']);
+            // this.router.navigate(['/players']);
           }
         } else {
           console.warn('No owner found for the provided email.');

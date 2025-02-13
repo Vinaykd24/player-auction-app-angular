@@ -19,6 +19,10 @@ export interface OwnerDetails {
   budget: number;
 }
 
+export interface AllOwnersResponse {
+  players: OwnerDetails[];
+}
+
 export interface PlayersResponse {
   players: Player[];
 }

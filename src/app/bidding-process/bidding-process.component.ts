@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PlayerService } from '../services/player.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import {
   BiddingPayload,
@@ -41,7 +41,7 @@ export class BiddingProcessComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private playerService: PlayerService,
-    private route: ActivatedRoute,
+    private router: Router,
     private snackBar: MatSnackBar
   ) {
     this.biddingForm = this.fb.group({
@@ -89,6 +89,11 @@ export class BiddingProcessComponent implements OnInit, OnDestroy {
               horizontalPosition: 'right',
               verticalPosition: 'top',
             });
+            if (this.ownerDetails) {
+              this.router.navigate(['dashboard']);
+            } else if (this.isAdmin) {
+              this.router.navigate(['players']);
+            }
           }),
           takeUntil(this.destroy$)
         )

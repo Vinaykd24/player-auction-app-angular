@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { map, Observable, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
+  AllOwnersResponse,
   BiddingPayload,
   BiddingProgressResponse,
   LatestBidResponse,
@@ -153,5 +154,9 @@ export class PlayerService {
     return this.http.get<MarkSoldResponse>(
       `${this.apiUrl}/markplayerassold/${playerId}`
     );
+  }
+
+  getAllOwnersDetails(): Observable<AllOwnersResponse> {
+    return this.http.get<AllOwnersResponse>(`${this.apiUrl}/owners`);
   }
 }

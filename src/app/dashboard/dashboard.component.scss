@@ -1,0 +1,91 @@
+.dashboard-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-card {
+  margin-bottom: 24px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  mat-icon {
+    color: #666;
+  }
+
+  .text-green-600 {
+    color: #16a34a;
+  }
+  
+  .text-orange-500 {
+    color: #f97316;
+  }
+  
+  .text-red-600 {
+    color: #dc2626;
+  }
+  
+  .font-bold {
+    font-weight: 600;
+  }
+  
+  .text-sm {
+    font-size: 0.875rem;
+  }
+  
+  .text-gray-500 {
+    color: #6b7280;
+  }
+}
+
+.members-card {
+  .mat-mdc-table {
+    width: 100%;
+  }
+
+  .mat-mdc-header-cell {
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  .mat-mdc-row:hover {
+    background: whitesmoke;
+  }
+}
+
+.owners-card {
+  margin-bottom: 24px;
+
+  .mat-mdc-table {
+    width: 100%;
+  }
+
+  .text-gray-500 {
+    color: #6b7280;
+  }
+
+  .ml-1 {
+    margin-left: 4px;
+  }
+
+  mat-icon {
+    vertical-align: middle;
+    font-size: 20px;
+  }
+
+  .mat-mdc-row:hover {
+    background: whitesmoke;
+    cursor: pointer;
+  }
+}

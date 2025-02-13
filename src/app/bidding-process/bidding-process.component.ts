@@ -84,7 +84,6 @@ export class BiddingProcessComponent implements OnInit, OnDestroy {
         .onPlayerSoldUpdates()
         .pipe(
           tap((playerSoldUpdates) => {
-            debugger;
             this.snackBar.open(playerSoldUpdates.message, 'Close', {
               duration: 5000,
               horizontalPosition: 'right',

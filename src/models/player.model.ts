@@ -56,8 +56,10 @@ export interface LatestBidResponse {
 export interface MarkSoldResponse {
   message: string;
   playerId: string;
-  teamName: string;
   firstName: string;
   lastName: string;
   soldAmount: number;
+  teamName: string;
+  teamId: string;
+  teamBudget: number;
 }

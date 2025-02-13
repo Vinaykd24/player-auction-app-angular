@@ -9,48 +9,50 @@
     Is the team ID the same:
     {{ ownerDetails?.userId === selectedPlayer.teamId ? "Yes" : "No" }}
   </p>
-
+  @if(ownerDetails) {
   <form [formGroup]="biddingForm" class="bid-controls">
     <ng-container *ngIf="selectedPlayer.bidAmount <= 100; else bidAbove100">
       <button
         mat-raised-button
         color="primary"
+        [disabled]="ownerDetails?.userId === selectedPlayer.teamId"
         (click)="bidByAmount(100, selectedPlayer)"
       >
-        +100
+        {{ "100" | currency : "INR" }}
       </button>
       <button
         mat-raised-button
         color="accent"
+        [disabled]="ownerDetails?.userId === selectedPlayer.teamId"
         (click)="bidByAmount(200, selectedPlayer)"
       >
-        +200
+        {{ "200" | currency : "INR" }}
       </button>
     </ng-container>
     <ng-template #bidAbove100>
       <button
         mat-raised-button
         color="warn"
+        [disabled]="ownerDetails?.userId === selectedPlayer.teamId"
         (click)="bidByAmount(500, selectedPlayer)"
       >
-        +500
+        {{ "500" | currency : "INR" }}
       </button>
     </ng-template>
   </form>
+  }
 </div>
 
 <div class="container">
-  <h2 *ngIf="ownerDetails; else adminTemplate">
-    Welcome, {{ ownerDetails.firstName }} {{ ownerDetails.lastName }}!
-  </h2>
-  <h3 *ngIf="ownerDetails">
-    Purse Balance: ₹{{ ownerDetails.budget | number }}
-  </h3>
+  @if(ownerDetails) {
+  <h2>Welcome, {{ ownerDetails.firstName }} {{ ownerDetails.lastName }}!</h2>
+  <h3>Purse Balance: ₹{{ ownerDetails.budget | number }}</h3>
+  }
 
   <div *ngIf="isAdmin">
     <h2>Admin Dashboard</h2>
-    <div *ngIf="latestDetails$ | async as details">
-      <form [formGroup]="biddingForm" class="admin-controls">
+    <form [formGroup]="biddingForm" class="admin-controls">
+      <div *ngIf="latestDetails$ | async as details">
         <button
           mat-flat-button
           color="primary"
@@ -58,11 +60,11 @@
         >
           Mark as Sold
         </button>
-        <button mat-raised-button color="warn" (click)="markAsUnsold()">
-          Mark as Unsold
-        </button>
-      </form>
-    </div>
+      </div>
+      <button mat-raised-button color="warn" (click)="markAsUnsold()">
+        Mark as Unsold
+      </button>
+    </form>
   </div>
 
   <ng-template #adminTemplate>

@@ -5,6 +5,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import {
   BiddingPayload,
   BiddingProgressResponse,
+  LatestBidResponse,
   OwnerDetails,
 } from '../../models/player.model';
 import { BehaviorSubject, Subject, Subscription, tap, takeUntil } from 'rxjs';
@@ -29,7 +30,7 @@ import { MatInputModule } from '@angular/material/input';
 })
 export class BiddingProcessComponent implements OnInit, OnDestroy {
   selectedPlayer$ = new BehaviorSubject<BiddingProgressResponse | null>(null);
-  latestDetails$ = new BehaviorSubject<BiddingProgressResponse | null>(null);
+  latestDetails$ = new BehaviorSubject<LatestBidResponse | null>(null);
   lastBidTeamId: string | null = null;
   ownerDetails!: OwnerDetails | null;
   biddingForm: FormGroup;
@@ -83,6 +84,7 @@ export class BiddingProcessComponent implements OnInit, OnDestroy {
         .onPlayerSoldUpdates()
         .pipe(
           tap((playerSoldUpdates) => {
+            debugger;
             this.snackBar.open(playerSoldUpdates.message, 'Close', {
               duration: 5000,
               horizontalPosition: 'right',

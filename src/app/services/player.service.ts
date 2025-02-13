@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import {
   BiddingPayload,
   BiddingProgressResponse,
+  LatestBidResponse,
   MarkSoldResponse,
   OwnerDetails,
   Player,
@@ -22,8 +23,8 @@ export class PlayerService {
     signal(null);
   private isAdmin: WritableSignal<boolean> = signal(false);
   private socket!: Socket;
-  private biddingUpdatesSubject: Subject<BiddingProgressResponse> =
-    new Subject<BiddingProgressResponse>();
+  private biddingUpdatesSubject: Subject<LatestBidResponse> =
+    new Subject<LatestBidResponse>();
   private playerSoldSubject: Subject<MarkSoldResponse> =
     new Subject<MarkSoldResponse>();
   constructor(private http: HttpClient) {}
@@ -42,7 +43,7 @@ export class PlayerService {
       console.log('✅ Connected to WebSocket');
     });
 
-    this.socket.on('updateBid', (data: BiddingProgressResponse) => {
+    this.socket.on('updateBid', (data: LatestBidResponse) => {
       console.log('📢 Received bid update:', data);
       this.biddingUpdatesSubject.next(data);
     });
@@ -68,7 +69,7 @@ export class PlayerService {
     }
   }
 
-  onBiddingUpdates(): Observable<BiddingProgressResponse> {
+  onBiddingUpdates(): Observable<LatestBidResponse> {
     return this.biddingUpdatesSubject.asObservable();
   }
 

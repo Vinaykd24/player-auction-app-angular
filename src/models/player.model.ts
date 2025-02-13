@@ -46,6 +46,18 @@ export interface BiddingProgressResponse {
   teamId: string;
 }
 
+export interface LatestBidResponse {
+  playerId: string;
+  teamId: string;
+  currentBidAmount: number;
+  bidAmount: number;
+}
+
 export interface MarkSoldResponse {
   message: string;
+  playerId: string;
+  teamName: string;
+  firstName: string;
+  lastName: string;
+  soldAmount: number;
 }

@@ -54,16 +54,11 @@
         <button
           mat-flat-button
           color="primary"
-          (click)="markAsSold(details.userId)"
+          (click)="markAsSold(details.playerId)"
         >
           Mark as Sold
         </button>
-        <button
-          mat-raised-button
-          color="warn"
-          [disabled]="details.currentBidAmount !== details.basePrice"
-          (click)="markAsUnsold()"
-        >
+        <button mat-raised-button color="warn" (click)="markAsUnsold()">
           Mark as Unsold
         </button>
       </form>

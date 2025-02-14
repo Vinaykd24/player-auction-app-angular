@@ -32,6 +32,8 @@ import { UserService } from '../services/user.service';
 export class AddUserComponent {
   userForm: FormGroup;
   isSubmitting = false;
+  selectedFile: File | null = null;
+  previewUrl: string | ArrayBuffer | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -51,36 +53,61 @@ export class AddUserComponent {
 
   onSubmit() {
     if (this.userForm.valid) {
-      console.log('Form submitted:', this.userForm.value);
-      if (this.userForm.valid) {
-        this.isSubmitting = true;
+      this.isSubmitting = true;
 
-        this.userService.createUser(this.userForm.value).subscribe({
-          next: (response) => {
-            this.snackBar.open('User created successfully!', 'Close', {
-              duration: 3000,
+      const formData = new FormData();
+      Object.keys(this.userForm.value).forEach((key) => {
+        formData.append(key, this.userForm.value[key]);
+      });
+
+      if (this.selectedFile) {
+        formData.append('profileImage', this.selectedFile);
+      }
+
+      this.userService.createUser(formData).subscribe({
+        next: (response) => {
+          this.snackBar.open('User created successfully!', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+          });
+          this.resetForm();
+        },
+        error: (error) => {
+          console.error('Error creating user:', error);
+          this.snackBar.open(
+            error.error.message || 'Failed to create user. Please try again.',
+            'Close',
+            {
+              duration: 5000,
               horizontalPosition: 'right',
               verticalPosition: 'top',
-            });
-            this.resetForm();
-          },
-          error: (error) => {
-            console.error('Error creating user:', error);
-            this.snackBar.open(
-              error.error.message || 'Failed to create user. Please try again.',
-              'Close',
-              {
-                duration: 5000,
-                horizontalPosition: 'right',
-                verticalPosition: 'top',
-              }
-            );
-          },
-          complete: () => {
-            this.isSubmitting = false;
-          },
-        });
-      }
+            }
+          );
+        },
+        complete: () => {
+          this.isSubmitting = false;
+        },
+      });
+    }
+  }
+
+  onFileSelected(event: Event) {
+    debugger;
+    console.log('File selection triggered'); // Debugging line
+
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files.length > 0) {
+      this.selectedFile = fileInput.files[0];
+
+      console.log('Selected file:', this.selectedFile.name); // Debugging line
+
+      // Create a preview URL
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result as string;
+      };
+      reader.readAsDataURL(this.selectedFile);
     }
   }
 

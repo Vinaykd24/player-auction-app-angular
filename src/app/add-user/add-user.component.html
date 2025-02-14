@@ -79,6 +79,33 @@
       </mat-form-field>
       }
 
+      <div class="file-upload">
+        <input
+          type="file"
+          #fileInput
+          hidden
+          (change)="onFileSelected($event)"
+          accept="image/*"
+        />
+        <button
+          mat-raised-button
+          color="primary"
+          type="button"
+          (click)="fileInput.click()"
+        >
+          Upload Profile Image
+        </button>
+        <span *ngIf="selectedFile">{{ selectedFile.name }}</span>
+      </div>
+
+      <img
+        *ngIf="previewUrl"
+        [src]="previewUrl"
+        alt="Profile Preview"
+        width="100"
+        height="100"
+      />
+
       <div class="form-actions">
         <button
           mat-raised-button

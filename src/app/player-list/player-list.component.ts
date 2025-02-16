@@ -67,7 +67,7 @@ export class PlayerListComponent implements OnInit {
     });
 
     this.playerService
-      .getPlayers()
+      .getAvailablePlayers()
       .pipe(
         catchError((error) => {
           console.error('Error loading players:', error);

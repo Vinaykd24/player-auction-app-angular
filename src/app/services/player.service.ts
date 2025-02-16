@@ -84,6 +84,20 @@ export class PlayerService {
     );
   }
 
+  getAvailablePlayers(): Observable<Player[]> {
+    return this.http
+      .get<PlayersResponse>(`${this.apiUrl}/availableplayers`)
+      .pipe(
+        map((response) => response.players) // Extract players array from response
+      );
+  }
+
+  getUnsoldPlayers(): Observable<Player[]> {
+    return this.http.get<PlayersResponse>(`${this.apiUrl}/unsoldplayers`).pipe(
+      map((response) => response.players) // Extract players array from response
+    );
+  }
+
   startBidding(playerId: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/initiatebidding/${playerId}`, {});
   }

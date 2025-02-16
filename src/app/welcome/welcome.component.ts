@@ -63,8 +63,8 @@ export class WelcomeComponent {
             this.playerService.setSelectedOwnerSignal(response);
           } else if (response.userType.toLocaleLowerCase() === 'admin') {
             this.playerService.setIsAdminSignal();
-            this.router.navigate(['/dashboard']);
-            // this.router.navigate(['/players']);
+            // this.router.navigate(['/dashboard']);
+            this.router.navigate(['/players']);
           }
         } else {
           console.warn('No owner found for the provided email.');

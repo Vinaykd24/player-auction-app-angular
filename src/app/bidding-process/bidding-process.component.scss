@@ -56,6 +56,11 @@ pre {
   color: #fff;
 }
 
+[mat-raised-button][color="secondary"] {
+  background-color: #19cfd2;
+  color: #fff;
+}
+
 [mat-raised-button][color="accent"] {
   background-color: #ff4081;
   color: #fff;

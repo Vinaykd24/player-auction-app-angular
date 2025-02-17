@@ -42,6 +42,29 @@
         </button>
       </ng-container>
       }
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Place Custom Bid</mat-label>
+          <input matInput formControlName="customBidAmt" />
+          <mat-error
+            *ngIf="
+              biddingForm.get('customBidAmt')?.value > selectedPlayer.bidAmount
+            "
+          >
+            Bid amount should be more than previous bid!
+          </mat-error>
+        </mat-form-field>
+        <button
+          mat-raised-button
+          color="warn"
+          [disabled]="ownerDetails?.userId === selectedPlayer.teamId"
+          (click)="
+            bidByAmount(biddingForm.get('customBidAmt')?.value, selectedPlayer)
+          "
+        >
+          Place Bid
+        </button>
+      </div>
 
       <ng-template #bidAbove100>
         <button

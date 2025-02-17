@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PlayerService } from '../services/player.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatListModule } from '@angular/material/list';
 import {
   BiddingPayload,
   BiddingProgressResponse,
@@ -14,6 +15,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-bidding-process',
@@ -24,6 +26,8 @@ import { MatInputModule } from '@angular/material/input';
     MatInputModule,
     MatButtonModule,
     MatSnackBarModule,
+    MatCardModule,
+    MatListModule,
   ],
   templateUrl: './bidding-process.component.html',
   styleUrls: ['./bidding-process.component.scss'],
@@ -37,6 +41,7 @@ export class BiddingProcessComponent implements OnInit, OnDestroy {
   currentValue = 0;
   private destroy$ = new Subject<void>();
   isAdmin = false;
+  isLowBidAmt = false;
 
   constructor(
     private fb: FormBuilder,
@@ -129,7 +134,9 @@ export class BiddingProcessComponent implements OnInit, OnDestroy {
 
   bidByAmount(amount: number, biddingObject: any): void {
     if (!this.ownerDetails || !biddingObject) return;
-
+    if (amount < biddingObject.bidAmount) {
+      this.isLowBidAmt = true;
+    }
     const currentBidAmount =
       biddingObject.currentBidAmount || biddingObject.basePrice || 0;
     const biddingPayload: BiddingPayload = {

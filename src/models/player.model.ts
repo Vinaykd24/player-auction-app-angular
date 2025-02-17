@@ -48,6 +48,7 @@ export interface BiddingProgressResponse {
   biddingId: string;
   bidAmount: number;
   teamId: string;
+  imageUrl?: string;
 }
 
 export interface LatestBidResponse {

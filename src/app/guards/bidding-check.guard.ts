@@ -6,3 +6,8 @@ export const biddingCheckGuard: CanActivateFn = (route, state) => {
   const playerService = inject(PlayerService);
   return !!playerService.getSelectedPlayerUidSignal();
 };
+
+export const authGuard: CanActivateFn = () => {
+  const playerService = inject(PlayerService);
+  return playerService.getIsAdmin();
+};

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import {
@@ -7,6 +7,7 @@ import {
   RouterModule,
   RouterOutlet,
 } from '@angular/router';
+import { PlayerService } from './services/player.service';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,12 @@ import {
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'Player Auction App';
+  isAdmin = false;
+  constructor(private playerService: PlayerService) {}
+
+  ngOnInit(): void {
+    this.isAdmin = this.playerService.getIsAdmin();
+  }
 }

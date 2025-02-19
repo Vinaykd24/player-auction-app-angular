@@ -1,92 +1,190 @@
-.container {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
+.bidding-container {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-h2 {
-  font-size: 1.8rem;
-  color: #333;
-  margin-bottom: 10px;
+.main-card, .secondary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-h3 {
+.player-header {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+.player-name {
   font-size: 1.5rem;
-  color: #555;
-  margin-bottom: 10px;
+  color: #2d3748;
+  margin: 0 0 16px 0;
 }
 
-.bid-controls,
-.admin-controls {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
+.current-bid {
+  .label {
+    display: block;
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 4px;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    color: #2b6cb0;
+    margin: 0;
+    font-weight: 600;
+  }
 }
 
-button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  border-radius: 5px;
-  font-weight: normal;
+.bid-info {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
-pre {
-  background-color: #ececec;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 0.9rem;
-  color: #333;
+.info-item {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 8px;
+
+  .label {
+    display: block;
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 4px;
+  }
+
+  .value {
+    font-size: 1.1rem;
+    color: #2d3748;
+    font-weight: 500;
+  }
 }
 
-[mat-raised-button] {
-  transition: transform 0.2s ease-in-out;
-}
-
-[mat-raised-button]:hover {
-  transform: scale(1.05);
-}
-
-[mat-raised-button][color="primary"] {
-  background-color: #1976d2;
-  color: #fff;
-}
-
-[mat-raised-button][color="secondary"] {
-  background-color: #19cfd2;
-  color: #fff;
-}
-
-[mat-raised-button][color="accent"] {
-  background-color: #ff4081;
-  color: #fff;
-}
-
-[mat-raised-button][color="warn"] {
-  background-color: #d32f2f;
-  color: #fff;
-}
-
-[mat-flat-button][color="primary"] {
-  background-color: #4caf50;
-  color: #fff;
-}
-
-h1 {
-  font-size: 2rem;
-  color: #000;
-  margin: 10px 0;
-}
-
-.form-row {
+.bid-controls {
   display: flex;
   flex-direction: column;
+  gap: 16px;
 }
 
-.form-row mat-form-field {
-  flex: 1;
+.quick-bid-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  button {
+    flex: 1;
+    min-width: 100px;
+  }
+}
+
+.base-price-btn {
+  width: 100%;
+  background: #48bb78;
+  color: white;
+
+  &:disabled {
+    background: #e2e8f0;
+  }
+}
+
+.custom-bid-section {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+
+  .custom-bid-input {
+    flex: 1;
+  }
+}
+
+.owner-info {
+  h2 {
+    font-size: 1.25rem;
+    color: #2d3748;
+    margin-bottom: 16px;
+  }
+}
+
+.purse-balance {
+  background: #ebf8ff;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+
+  .label {
+    display: block;
+    font-size: 0.85rem;
+    color: #2c5282;
+    margin-bottom: 4px;
+  }
+
+  h3 {
+    color: #2b6cb0;
+    margin: 0;
+    font-size: 1.5rem;
+  }
+}
+
+.admin-section {
+  border-top: 1px solid #eee;
+  padding-top: 24px;
+
+  h2 {
+    font-size: 1.25rem;
+    color: #2d3748;
+    margin-bottom: 16px;
+  }
+}
+
+.admin-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  text-align: center;
+  color: #e53e3e;
+
+  mat-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .bidding-container {
+    grid-template-columns: 1fr;
+  }
+
+  .bid-info {
+    grid-template-columns: 1fr;
+  }
+
+  .custom-bid-section {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
 }

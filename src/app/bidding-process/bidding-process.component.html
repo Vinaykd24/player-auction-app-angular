@@ -1,49 +1,66 @@
-<div *ngIf="selectedPlayer$ | async as selectedPlayer">
-  <div class="container">
-    <h2>{{ selectedPlayer.firstName }} {{ selectedPlayer.lastName }}</h2>
-    <h1>Current Bid: ₹{{ selectedPlayer.currentBidAmount | number }}</h1>
-    <h3>Base Price: ₹{{ selectedPlayer.basePrice | number }}</h3>
-    <div>
-      <p>Last Bid Amount: ₹{{ selectedPlayer.bidAmount | number }}</p>
+<div
+  class="bidding-container"
+  *ngIf="selectedPlayer$ | async as selectedPlayer"
+>
+  <!-- Player Bidding Card -->
+  <div class="main-card">
+    <div class="player-header">
+      <h2 class="player-name">
+        {{ selectedPlayer.firstName }} {{ selectedPlayer.lastName }}
+      </h2>
+      <div class="current-bid">
+        <span class="label">Current Bid</span>
+        <h1>₹{{ selectedPlayer.currentBidAmount | number }}</h1>
+      </div>
     </div>
-    <p>
-      Is the team ID the same:
-      {{ ownerDetails?.userId === selectedPlayer.teamId ? "Yes" : "No" }}
-    </p>
+
+    <div class="bid-info">
+      <div class="info-item">
+        <span class="label">Base Price</span>
+        <span class="value">₹{{ selectedPlayer.basePrice | number }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Last Bid</span>
+        <span class="value">₹{{ selectedPlayer.bidAmount | number }}</span>
+      </div>
+    </div>
+
     @if(ownerDetails) {
     <form [formGroup]="biddingForm" class="bid-controls">
-      <ng-container *ngIf="selectedPlayer.bidAmount <= 100; else bidAbove100">
+      <div class="quick-bid-buttons">
+        <ng-container *ngIf="selectedPlayer.bidAmount <= 100; else bidAbove100">
+          <button
+            mat-raised-button
+            color="primary"
+            [disabled]="ownerDetails?.userId === selectedPlayer.teamId"
+            (click)="bidByAmount(100, selectedPlayer)"
+          >
+            ₹100
+          </button>
+          <button
+            mat-raised-button
+            color="accent"
+            [disabled]="ownerDetails?.userId === selectedPlayer.teamId"
+            (click)="bidByAmount(200, selectedPlayer)"
+          >
+            ₹200
+          </button>
+        </ng-container>
+
+        @if(selectedPlayer.currentBidAmount === 0) {
         <button
           mat-raised-button
-          color="primary"
-          [disabled]="ownerDetails?.userId === selectedPlayer.teamId"
-          (click)="bidByAmount(100, selectedPlayer)"
-        >
-          {{ "100" | currency : "INR" }}
-        </button>
-        <button
-          mat-raised-button
-          color="accent"
-          [disabled]="ownerDetails?.userId === selectedPlayer.teamId"
-          (click)="bidByAmount(200, selectedPlayer)"
-        >
-          {{ "200" | currency : "INR" }}
-        </button>
-      </ng-container>
-      @if(selectedPlayer.currentBidAmount === 0) {
-      <ng-container>
-        <button
-          mat-raised-button
-          color="secondary"
+          class="base-price-btn"
           [disabled]="ownerDetails?.userId === selectedPlayer.teamId"
           (click)="bidByAmount(0, selectedPlayer)"
         >
           Get Player At Base Price
         </button>
-      </ng-container>
-      }
-      <div class="form-row">
-        <mat-form-field appearance="outline">
+        }
+      </div>
+
+      <div class="custom-bid-section">
+        <mat-form-field appearance="outline" class="custom-bid-input">
           <mat-label>Place Custom Bid</mat-label>
           <input matInput type="number" formControlName="customBidAmt" />
           <mat-error
@@ -73,49 +90,50 @@
           [disabled]="ownerDetails?.userId === selectedPlayer.teamId"
           (click)="bidByAmount(500, selectedPlayer)"
         >
-          {{ "500" | currency : "INR" }}
+          ₹500
         </button>
       </ng-template>
     </form>
     }
   </div>
 
-  <div>
-    <div class="container">
-      @if(ownerDetails) {
+  <!-- Owner/Admin Card -->
+  <div class="secondary-card">
+    @if(ownerDetails) {
+    <div class="owner-info">
       <h2>
         Welcome, {{ ownerDetails.firstName }} {{ ownerDetails.lastName }}!
       </h2>
-      <h3>Purse Balance: ₹{{ ownerDetails.budget | number }}</h3>
-      }
+      <div class="purse-balance">
+        <span class="label">Purse Balance</span>
+        <h3>₹{{ ownerDetails.budget | number }}</h3>
+      </div>
+    </div>
+    }
 
-      <div *ngIf="isAdmin">
-        <h2>Admin Dashboard</h2>
-        <div *ngIf="latestDetails$ | async as details">
-          <form [formGroup]="biddingForm" class="admin-controls">
-            <button
-              mat-flat-button
-              color="primary"
-              (click)="markAsSold(details.playerId)"
-            >
-              Mark as Sold
-            </button>
-            @if(selectedPlayer.currentBidAmount === 0){
-            <button mat-raised-button color="warn" (click)="markAsUnsold()">
-              Mark as Unsold
-            </button>
-            }
-          </form>
-        </div>
+    <div class="admin-section" *ngIf="isAdmin">
+      <h2>Admin Dashboard</h2>
+      <div *ngIf="latestDetails$ | async as details">
+        <form [formGroup]="biddingForm" class="admin-controls">
+          <button
+            mat-flat-button
+            color="primary"
+            (click)="markAsSold(details.playerId)"
+          >
+            Mark as Sold
+          </button>
+          @if(selectedPlayer.currentBidAmount === 0){
+          <button mat-raised-button color="warn" (click)="markAsUnsold()">
+            Mark as Unsold
+          </button>
+          }
+        </form>
       </div>
     </div>
   </div>
-
-  <ng-template #adminTemplate>
-    <h2>Admin not logged in or owner details not found!</h2>
-  </ng-template>
 </div>
 
-<div *ngIf="!ownerDetails && !isAdmin">
+<div class="error-container" *ngIf="!ownerDetails && !isAdmin">
+  <mat-icon>error_outline</mat-icon>
   <h1>Error: Owner not found!</h1>
 </div>

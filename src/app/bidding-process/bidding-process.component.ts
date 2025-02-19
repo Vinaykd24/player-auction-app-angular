@@ -16,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-bidding-process',
@@ -28,6 +29,7 @@ import { MatCardModule } from '@angular/material/card';
     MatSnackBarModule,
     MatCardModule,
     MatListModule,
+    MatIconModule,
   ],
   templateUrl: './bidding-process.component.html',
   styleUrls: ['./bidding-process.component.scss'],

@@ -48,15 +48,15 @@
       <mat-form-field appearance="outline">
         <mat-label>User Type</mat-label>
         <mat-select formControlName="userType" required>
-          <mat-option value="admin">Admin</mat-option>
-          <mat-option value="player">Player</mat-option>
-          <mat-option value="owner">Owner</mat-option>
+          <mat-option value="ADMIN">Admin</mat-option>
+          <mat-option value="PLAYER">Player</mat-option>
+          <mat-option value="OWNER">Owner</mat-option>
         </mat-select>
         <mat-error *ngIf="userForm.get('userType')?.errors?.['required']">
           User type is required
         </mat-error>
       </mat-form-field>
-      @if(userForm.get('userType')?.value === 'owner') {
+      @if(userForm.get('userType')?.value === 'OWNER') {
       <mat-form-field appearance="outline">
         <mat-label>Team Name</mat-label>
         <input matInput formControlName="teamName" required />
@@ -64,7 +64,7 @@
           Team name is required
         </mat-error>
       </mat-form-field>
-      } @if(userForm.get('userType')?.value === 'player') {
+      } @if(userForm.get('userType')?.value === 'PLAYER') {
       <mat-form-field appearance="outline">
         <mat-label>Role</mat-label>
         <mat-select formControlName="role" required>

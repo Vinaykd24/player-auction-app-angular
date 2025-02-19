@@ -7,20 +7,35 @@ export interface Player {
   userId: string;
   basePrice: number;
 }
+export interface AllOwnersResponse {
+  players: OwnerDetails[];
+}
 
-export interface OwnerDetails {
-  teamName: string;
+export interface TeamMember {
   firstName: string;
   lastName: string;
   userEmail: string;
   userType: string;
   userId: string;
-  teamMembers: string[];
-  budget: number;
+  role: string;
+  basePrice: number;
+  biddingStatus: 'SOLD' | 'UNSOLD'; // Can be expanded with other possible statuses
+  currentBidAmount: number;
+  createdAt: string;
+  biddingId: string;
+  teamId: string;
+  bidAmount: number;
 }
 
-export interface AllOwnersResponse {
-  players: OwnerDetails[];
+export interface OwnerDetails {
+  firstName: string;
+  lastName: string;
+  userEmail: string;
+  userType: string;
+  userId: string;
+  teamName: string;
+  teamMembers: TeamMember[];
+  budget: number;
 }
 
 export interface PlayersResponse {

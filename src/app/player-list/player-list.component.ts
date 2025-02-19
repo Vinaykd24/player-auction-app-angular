@@ -7,9 +7,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { PlayerService } from '../services/player.service';
-import { Player } from '../../models/player.model';
-import { BehaviorSubject, catchError, finalize, of } from 'rxjs';
+import { AllOwnersResponse, Player } from '../../models/player.model';
+import { BehaviorSubject, catchError, finalize, Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
 
 interface TableState {
   players: Player[];
@@ -27,13 +30,15 @@ interface TableState {
     MatButtonModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    MatCardModule,
+    MatIconModule,
+    MatChipsModule,
   ],
   templateUrl: './player-list.component.html',
   styleUrl: './player-list.component.scss',
 })
 export class PlayerListComponent implements OnInit {
   displayedColumns: string[] = ['name', 'role', 'basePrice', 'actions'];
-
   private tableStateSubject = new BehaviorSubject<TableState>({
     players: [],
     loading: true,
@@ -48,6 +53,7 @@ export class PlayerListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<Player>;
+  ownerDetails$!: Observable<AllOwnersResponse>;
 
   constructor(
     private playerService: PlayerService,
@@ -57,6 +63,7 @@ export class PlayerListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadPlayers();
+    this.loadOwnerDetails();
   }
 
   loadPlayers() {
@@ -90,21 +97,50 @@ export class PlayerListComponent implements OnInit {
       });
   }
 
-  startBidding(player: Player) {
-    // Add player ID to bidding in progress
+  loadOwnerDetails(): void {
+    this.ownerDetails$ = this.playerService.getAllOwnersDetails();
+  }
+
+  getBudgetColorClass(budget: number): string {
+    // Assuming a maximum budget of 10,000,000 for calculation
+    const maxBudget = 10000000;
+    const percentage = (budget / maxBudget) * 100;
+
+    if (percentage <= 30) return 'budget-red';
+    if (percentage <= 50) return 'budget-orange';
+    return 'budget-green';
+  }
+
+  startAuction() {
+    const players = this.tableStateSubject.value.players;
+
+    if (!players.length) {
+      this.snackBar.open('No available players for auction.', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+      return;
+    }
+
+    // Randomly select a player
+    const randomIndex = Math.floor(Math.random() * players.length);
+    const selectedPlayer = players[randomIndex];
+
+    // Add selected player to bidding process
     this.biddingInProgressSubject.next([
       ...this.biddingInProgressSubject.value,
-      player.userId,
+      selectedPlayer.userId,
     ]);
 
     this.playerService
-      .startBidding(player.userId)
+      .startBidding(selectedPlayer.userId)
       .pipe(
         finalize(() => {
-          // Remove player ID from bidding in progress
+          // Remove from bidding progress after processing
           this.biddingInProgressSubject.next(
             this.biddingInProgressSubject.value.filter(
-              (id) => id !== player.userId
+              (id) => id !== selectedPlayer.userId
             )
           );
         })
@@ -112,7 +148,7 @@ export class PlayerListComponent implements OnInit {
       .subscribe({
         next: () => {
           this.snackBar.open(
-            `Bidding started for ${player.firstName} ${player.lastName}`,
+            `Auction started for ${selectedPlayer.firstName} ${selectedPlayer.lastName}`,
             'Close',
             {
               duration: 5000,
@@ -120,13 +156,13 @@ export class PlayerListComponent implements OnInit {
               verticalPosition: 'top',
             }
           );
-          this.playerService.setSelectedPlayerUidSignal(player.userId);
+          this.playerService.setSelectedPlayerUidSignal(selectedPlayer.userId);
           this.router.navigate(['/biddingprocess']);
         },
         error: (error) => {
-          console.error('Error starting bidding:', error);
+          console.error('Error starting auction:', error);
           this.snackBar.open(
-            'Failed to start bidding. Please try again.',
+            'Failed to start auction. Please try again.',
             'Close',
             {
               duration: 5000,

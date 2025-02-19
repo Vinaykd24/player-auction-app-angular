@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 interface TableState {
   players: Player[];
@@ -33,6 +34,7 @@ interface TableState {
     MatCardModule,
     MatIconModule,
     MatChipsModule,
+    MatTooltipModule,
   ],
   templateUrl: './player-list.component.html',
   styleUrl: './player-list.component.scss',
@@ -103,12 +105,40 @@ export class PlayerListComponent implements OnInit {
 
   getBudgetColorClass(budget: number): string {
     // Assuming a maximum budget of 10,000,000 for calculation
-    const maxBudget = 10000000;
+    const maxBudget = 100000;
     const percentage = (budget / maxBudget) * 100;
 
     if (percentage <= 30) return 'budget-red';
     if (percentage <= 50) return 'budget-orange';
     return 'budget-green';
+  }
+
+  getRoleIcon(role: string): string {
+    const roleMap: { [key: string]: string } = {
+      Batsman: 'sports_cricket',
+      Batter: 'sports_cricket',
+      Bowler: 'sports_baseball',
+      'All Rounder': 'attractions',
+      'All-Rounder': 'attractions',
+      'Wicket Keeper': 'psychology',
+      'Wicket-Keeper': 'psychology',
+    };
+
+    return roleMap[role] || 'sports_cricket';
+  }
+
+  getRoleIconClass(role: string): string {
+    const roleClassMap: { [key: string]: string } = {
+      Batsman: 'batter-icon',
+      Batter: 'batter-icon',
+      Bowler: 'bowler-icon',
+      'All Rounder': 'all-rounder-icon',
+      'All-Rounder': 'all-rounder-icon',
+      'Wicket Keeper': 'keeper-icon',
+      'Wicket-Keeper': 'keeper-icon',
+    };
+
+    return roleClassMap[role] || 'batter-icon';
   }
 
   startAuction() {

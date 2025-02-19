@@ -132,17 +132,23 @@ export class BiddingProcessComponent implements OnInit, OnDestroy {
     });
   }
 
-  bidByAmount(amount: number, biddingObject: any): void {
+  bidByAmount(amount: number | string, biddingObject: any): void {
+    // Convert amount to number if it's a string
+    const bidAmount = typeof amount === 'string' ? Number(amount) : amount;
+
+    // Check if conversion resulted in a valid number
+    if (isNaN(bidAmount)) return;
+
     if (!this.ownerDetails || !biddingObject) return;
-    if (amount < biddingObject.bidAmount) {
+    if (bidAmount < biddingObject.bidAmount) {
       this.isLowBidAmt = true;
     }
     const currentBidAmount =
       biddingObject.currentBidAmount || biddingObject.basePrice || 0;
     const biddingPayload: BiddingPayload = {
       playerId: biddingObject.userId,
-      currentBidAmount: currentBidAmount + amount,
-      bidAmount: amount,
+      currentBidAmount: currentBidAmount + bidAmount,
+      bidAmount: bidAmount,
       teamId: this.ownerDetails.userId,
     };
 
@@ -154,8 +160,8 @@ export class BiddingProcessComponent implements OnInit, OnDestroy {
           if (currentPlayer) {
             this.selectedPlayer$.next({
               ...currentPlayer,
-              currentBidAmount: currentBidAmount + amount,
-              bidAmount: amount,
+              currentBidAmount: currentBidAmount + bidAmount,
+              bidAmount: bidAmount,
             });
           }
         })

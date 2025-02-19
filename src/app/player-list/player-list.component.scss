@@ -175,40 +175,92 @@
 }
 
 .team-members {
-  margin-top: 24px;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 12px;
-
+  margin-top: 16px;
+  
   h3 {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: #495057;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
     font-weight: 500;
   }
 }
 
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
 
 .team-member-card {
   display: flex;
   align-items: center;
   background: white;
-  padding: 12px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: transform 0.2s;
-  gap: 12px;
-  position: relative;
-  overflow: hidden;
+  padding: 8px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  gap: 8px;
+  font-size: 0.85rem;
+}
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+.role-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 4px;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    color: white;
+  }
+}
+
+.member-info {
+  overflow: hidden;
+  flex: 1;
+}
+
+.member-name {
+  font-weight: 500;
+  color: #2d3748;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.member-price {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.batter-icon {
+  background: #ff6b6b;
+}
+
+.bowler-icon {
+  background: #4dabf7;
+}
+
+.all-rounder-icon {
+  background: #9775fa;
+}
+
+.keeper-icon {
+  background: #51cf66;
+}
+
+@media (max-width: 1200px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .team-grid {
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 
@@ -237,9 +289,44 @@
 }
 
 .member-role {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.85rem;
   color: #6c757d;
   margin-bottom: 4px;
+}
+
+.role-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: white;
+  }
+}
+
+.batter-icon {
+  background: #ff6b6b;
+}
+
+.bowler-icon {
+  background: #4dabf7;
+}
+
+.all-rounder-icon {
+  background: #9775fa;
+}
+
+.keeper-icon {
+  background: #51cf66;
 }
 
 .member-price {

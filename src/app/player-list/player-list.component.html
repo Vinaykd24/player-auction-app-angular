@@ -64,31 +64,23 @@
           <span>{{ ownerDetails.userEmail }}</span>
         </div>
         @if (ownerDetails.teamMembers) {
-        <div class="team-members">
-          <h3>Team Members</h3>
+        <div class="team-members" *ngIf="ownerDetails.teamMembers.length > 0">
+          <h3>Team Members ({{ ownerDetails.teamMembers.length }})</h3>
           <div class="team-grid">
             @for (member of ownerDetails.teamMembers; track member.userId) {
             <div class="team-member-card">
-              <div class="member-avatar">
-                <mat-icon>person</mat-icon>
+              <div class="role-icon" [ngClass]="getRoleIconClass(member.role)">
+                <mat-icon [matTooltip]="member.role">{{
+                  getRoleIcon(member.role)
+                }}</mat-icon>
               </div>
               <div class="member-info">
                 <div class="member-name">
                   {{ member.firstName }} {{ member.lastName }}
                 </div>
-                <div class="member-role">{{ member.role }}</div>
                 <div class="member-price">
-                  <span class="label">Bid Amount:</span>
-                  <span class="amount"
-                    >₹{{ member.currentBidAmount | number : "1.0-0" }}</span
-                  >
+                  {{ member.currentBidAmount | currency : "INR" }}
                 </div>
-              </div>
-              <div
-                class="member-status"
-                [class.sold]="member.biddingStatus === 'SOLD'"
-              >
-                {{ member.biddingStatus }}
               </div>
             </div>
             }

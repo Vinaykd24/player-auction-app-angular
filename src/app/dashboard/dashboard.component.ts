@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PlayerService } from '../services/player.service';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { AllOwnersResponse, OwnerDetails } from '../../models/player.model';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -51,9 +51,13 @@ export class DashboardComponent implements OnInit {
     } else {
       this.email = this.getCookie('email');
       if (this.email) {
-        this.ownerDetails$ = this.playerService.getUserDetailsByEmailId(
-          this.email
-        );
+        this.ownerDetails$ = this.playerService
+          .getUserDetailsByEmailId(this.email)
+          .pipe(
+            tap((response) => {
+              this.playerService.setSelectedOwnerSignal(response);
+            })
+          );
       }
     }
   }

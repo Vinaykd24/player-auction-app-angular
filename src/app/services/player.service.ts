@@ -18,7 +18,7 @@ import { io, Socket } from 'socket.io-client';
   providedIn: 'root',
 })
 export class PlayerService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = environment.apiUrlV1;
   private selectedPlayerUidSignal: WritableSignal<string> = signal('');
   private selectedOwnerSignal: WritableSignal<OwnerDetails | null> =
     signal(null);

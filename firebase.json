@@ -1,0 +1,10 @@
+{
+  "hosting": {
+    "public": "dist/player-auction-app-angular/browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

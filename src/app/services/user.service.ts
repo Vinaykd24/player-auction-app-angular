@@ -9,7 +9,7 @@ import { PlayersResponse } from '../../models/player.model';
   providedIn: 'root',
 })
 export class UserService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = environment.apiUrlV1;
 
   constructor(private http: HttpClient) {}
 
